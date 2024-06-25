@@ -124,13 +124,13 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
         centerTitle: true,
         title: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 40,
               width: 40,
               child: CircleAvatar(
                   backgroundImage: AssetImage("lib/assets/user_image.png")),
             ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Column(
@@ -152,7 +152,7 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Text(
@@ -306,7 +306,7 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500, // Adjusted font weight
-            color: const Color(0xff212226),
+            color: Color(0xff212226),
           ),
         ),
         Text(
@@ -322,7 +322,7 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500, // Adjusted font weight
-            color: const Color(0xff212226),
+            color: Color(0xff212226),
           ),
         ),
         Text(
@@ -352,7 +352,7 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500, // Adjusted font weight
-                  color: const Color(0xff212226),
+                  color: Color(0xff212226),
                 ),
               ),
               Text(
@@ -360,7 +360,7 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500, // Adjusted font weight
-                  color: const Color(0xff212226),
+                  color: Color(0xff212226),
                 ),
               ),
               Text(
@@ -368,7 +368,7 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500, // Adjusted font weight
-                  color: const Color(0xff212226),
+                  color: Color(0xff212226),
                 ),
               ),
               Text(
@@ -402,9 +402,9 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
           ),
         ),
         child: const Center(
-          child: const Text(
+          child: Text(
             'View Profile',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.blueAccent,
               fontWeight: FontWeight.bold,
               fontSize: 16,
