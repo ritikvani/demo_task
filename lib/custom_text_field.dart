@@ -6,6 +6,9 @@ class CustomTextField extends StatelessWidget {
   final bool isPassword;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
+  final int? maxLength;
+  final bool? readOnly ;
 
   const CustomTextField({
     required this.labelText,
@@ -13,6 +16,8 @@ class CustomTextField extends StatelessWidget {
     this.isPassword = false,
     required this.controller,
     required this.validator,
+    this.keyboardType,
+    this.maxLength, this.readOnly = false ,
   });
 
   OutlineInputBorder _getBorder(Color color) {
@@ -26,9 +31,13 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      keyboardType: keyboardType,
+      maxLength: maxLength,
+      readOnly: readOnly!,
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+        labelStyle:
+        const TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         hintText: hintText,
         enabledBorder: _getBorder(Colors.grey),
         focusedBorder: _getBorder(Colors.black),

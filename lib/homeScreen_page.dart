@@ -6,13 +6,15 @@ import 'package:task/auth_page.dart';
 class HomeScreenPage extends StatefulWidget {
   const HomeScreenPage(
       {Key? key,
-        required this.token,
-        required this.firstName,
-        required this.lastName})
+      required this.token,
+      required this.firstName,
+      required this.lastName,
+      required this.email})
       : super(key: key);
   final String token;
   final String firstName;
   final String lastName;
+  final String email;
 
   @override
   _HomeScreenPageState createState() => _HomeScreenPageState();
@@ -113,6 +115,7 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xffD8F1FE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
         toolbarHeight: 75,
@@ -121,20 +124,43 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
         centerTitle: true,
         title: Row(
           children: [
-            const Text(
-              'Welcome , ',
-              style: TextStyle(color: Colors.black, fontSize: 18),
+            SizedBox(
+              height: 40,
+              width: 40,
+              child: CircleAvatar(
+                  backgroundImage: AssetImage("lib/assets/user_image.png")),
             ),
-            Text(
-              widget.firstName,
-              style: const TextStyle(color: Colors.black, fontSize: 18),
+            SizedBox(
+              width: 10,
             ),
-            const SizedBox(
-              width: 5,
-            ),
-            Text(
-              widget.lastName,
-              style: const TextStyle(color: Colors.black, fontSize: 18),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      widget.firstName,
+                      style: const TextStyle(color: Colors.black, fontSize: 17),
+                    ),
+                    const SizedBox(
+                      width: 3,
+                    ),
+                    Text(
+                      widget.lastName,
+                      style: const TextStyle(color: Colors.black, fontSize: 17),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  widget.email,
+                  style:
+                      const TextStyle(color: Color(0xff949BA5), fontSize: 13),
+                )
+              ],
             ),
           ],
         ),
@@ -169,72 +195,90 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
       ),
       body: initialLoading
           ? Padding(
-        padding: const EdgeInsets.all(10),
-        child: RefreshIndicator(
-          onRefresh: _refreshData,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'User list',
-                    style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      const Text(
+                        'User list',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Image.asset(isGridView
+                                  ? "lib/assets/listView_deactivated.png"
+                                  : "lib/assets/listView_activated.png"),
+                              onPressed: toggleView,
+                            ),
+                            IconButton(
+                              icon: Image.asset(isGridView
+                                  ? "lib/assets/grid_view_activated.png"
+                                  : "lib/assets/gird_view_deactivated.png"),
+                              onPressed: toggleView,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Icon(isGridView ? Icons.list : Icons.grid_view),
-                    onPressed: toggleView,
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scrollInfo) {
+                        if (!isLoading &&
+                            scrollInfo.metrics.pixels ==
+                                scrollInfo.metrics.maxScrollExtent) {
+                          loadMoreData();
+                          setState(() {
+                            isLoading = true;
+                          });
+                        }
+                        return true;
+                      },
+                      child: RefreshIndicator(
+                        onRefresh: _refreshData,
+                        child: isGridView
+                            ? GridView.builder(
+                                controller: _scrollController,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                  childAspectRatio: 0.7,
+                                ),
+                                itemCount: userData.length,
+                                itemBuilder: (context, index) {
+                                  return buildUserCard(index);
+                                },
+                              )
+                            : ListView.builder(
+                                controller: _scrollController,
+                                itemCount: userData.length,
+                                itemBuilder: (context, index) {
+                                  return buildUserCard(index);
+                                },
+                              ),
+                      ),
+                    ),
                   ),
+                  if (isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                 ],
               ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (!isLoading &&
-                        scrollInfo.metrics.pixels ==
-                            scrollInfo.metrics.maxScrollExtent) {
-                      loadMoreData();
-                      setState(() {
-                        isLoading = true;
-                      });
-                    }
-                    return true;
-                  },
-                  child: isGridView
-                      ? GridView.builder(
-                    controller: _scrollController,
-                    gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 0.75,
-                    ),
-                    itemCount: userData.length,
-                    itemBuilder: (context, index) {
-                      return buildUserCard(index);
-                    },
-                  )
-                      : ListView.builder(
-                    controller: _scrollController,
-                    itemCount: userData.length,
-                    itemBuilder: (context, index) {
-                      return buildUserCard(index);
-                    },
-                  ),
-                ),
-              ),
-              if (isLoading)
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-            ],
-          ),
-        ),
-      )
+            )
           : const Center(child: CircularProgressIndicator()),
     );
   }
@@ -245,67 +289,127 @@ class _HomeScreenPageState extends State<HomeScreenPage> {
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'First name: ${userData[index]['first_name']}',
+        child: isGridView
+            ? buildGridViewProfile(index)
+            : buildListViewProfile(index),
+      ),
+    );
+  }
+
+  Widget buildGridViewProfile(int index) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          'First name : ${userData[index]['first_name']}',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500, // Adjusted font weight
+            color: const Color(0xff212226),
+          ),
+        ),
+        Text(
+          'Last name : ${userData[index]['last_name']}',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500, // Adjusted font weight
+            color: Color(0xff212226),
+          ),
+        ),
+        Text(
+          'Email: ${userData[index]['email']}',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500, // Adjusted font weight
+            color: const Color(0xff212226),
+          ),
+        ),
+        Text(
+          'Phone: ${userData[index]['country_code']} ${userData[index]['phone_no']}',
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500, // Adjusted font weight
+            color: Color(0xff212226),
+          ),
+        ),
+        const SizedBox(height: 8),
+        buildProfileButton(),
+      ],
+    );
+  }
+
+  Widget buildListViewProfile(int index) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'First name : ${userData[index]['first_name']}',
                 style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w500, // Adjusted font weight
+                  color: const Color(0xff212226),
+                ),
+              ),
+              Text(
+                'Last name : ${userData[index]['last_name']}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500, // Adjusted font weight
+                  color: const Color(0xff212226),
+                ),
+              ),
+              Text(
+                'Email : ${userData[index]['email']}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500, // Adjusted font weight
+                  color: const Color(0xff212226),
+                ),
+              ),
+              Text(
+                'Phone : ${userData[index]['country_code']} ${userData[index]['phone_no']}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500, // Adjusted font weight
                   color: Color(0xff212226),
                 ),
               ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        buildProfileButton(),
+      ],
+    );
+  }
+
+  Widget buildProfileButton() {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        height: 30,
+        width: MediaQuery.of(context).size.width * 0.3,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          border: Border.all(
+            color: Colors.blueAccent,
+            width: 1.0,
+          ),
+        ),
+        child: const Center(
+          child: const Text(
+            'View Profile',
+            style: const TextStyle(
+              color: Colors.blueAccent,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Last name: ${userData[index]['last_name']}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff212226),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Email: ${userData[index]['email']}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff212226),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Phone: ${userData[index]['country_code']} ${userData[index]['phone_no']}',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff212226),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () {
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('View Profile'),
-            ),
-          ],
+          ),
         ),
       ),
     );

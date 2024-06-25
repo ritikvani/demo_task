@@ -53,6 +53,7 @@ class SignupPage extends StatelessWidget {
               labelText: 'Country Code',
               hintText: 'Enter your country code',
               controller: _countryCodeController,
+              readOnly: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your country code';
@@ -62,12 +63,17 @@ class SignupPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             CustomTextField(
+              keyboardType: TextInputType.phone,
               labelText: 'Phone Number',
               hintText: 'Enter your phone number',
+              maxLength: 10,
               controller: _phoneNoController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your phone number';
+                }
+                else  if (value.length <= 9 ) {
+                  return 'Please enter valid phone number';
                 }
                 return null;
               },

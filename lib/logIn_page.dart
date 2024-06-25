@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   String? _token;
   String? _firstName;
   String? _lastName;
+  String? _email;
 
   @override
   Widget build(BuildContext context) {
@@ -163,11 +164,11 @@ class _LoginPageState extends State<LoginPage> {
             _token = responseDecode['record']['authtoken'];
             _firstName = responseDecode['record']['firstName'];
             _lastName = responseDecode['record']['lastName'];
-
+            _email =  responseDecode['record']['email'];
             _emailController.clear();
             _passwordController.clear();
             Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => HomeScreenPage(token: _token!, firstName: _firstName!, lastName: _lastName!,),
+              builder: (context) => HomeScreenPage(token: _token!, firstName: _firstName!, lastName: _lastName!, email: _email!),
             ));
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
